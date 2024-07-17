@@ -7,24 +7,25 @@
 
 import SwiftUI
 
-struct CreateMessageView: View {
-    var body: some View {
+public struct CreateMessageView: View {
+    
+    public var body: some View {
         TabView {
-            NewTextView()
-                .tabItem {
-                    Label("Text", systemImage: "textformat")
-                }
             NewPhotoView()
                 .tabItem {
                     Label("Photo", systemImage: "camera")
                 }
             NewAudioView()
                 .tabItem {
-                    Label("Photo", systemImage: "mic")
+                    Label("Audio", systemImage: "mic")
                 }
         }
+        .onAppear(perform: {
+            //LocationService.shared.checkLocationStatus()
+        })
         
     }
+    public init() {}
 }
 
 #Preview {
