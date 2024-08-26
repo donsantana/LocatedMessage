@@ -16,62 +16,84 @@ struct CameraView: View {
     @State private var description: String = ""
     @State var image: UIImage?
     @Environment(\.presentationMode) var isPresented
+    @Environment(\.dismiss) var dismiss
     @Bindable var locationService = LocationService()
     
     var body: some View {
         
-        if let selectedImage {
-            VStack {
-                HStack{
-                    Text("New Photo Message")
-                        .font(.headline)
-                    Spacer()
-                    Button {
-                        self.selectedImage = nil
-                        self.showCamera = true
-                    } label: {
-                        Image(systemName: "xmark")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 30, height: 30)
+        VStack() {
+            HStack {
+                Text("New photo Message")
+                    .font(.title2)
+                    .bold()
+                Spacer()
+                Button {
+//                    dismiss()
+                    closeView()
+                } label: {
+                    Image(systemName: "xmark")
+                        .resizable()
+                        .foregroundColor(.black)
+                        .frame(width: 30, height: 30)
+                }
+            }.padding(.bottom, 50)
+                .padding(.horizontal)
+            
+            if let selectedImage {
+                VStack {
+//                    HStack{
+//                        Text("New Photo Message")
+//                            .font(.headline)
+//                        Spacer()
+//                        Button {
+//                            self.selectedImage = nil
+//                            self.showCamera = true
+//                        } label: {
+//                            Image(systemName: "xmark")
+//                                .resizable()
+//                                .scaledToFit()
+//                                .frame(width: 30, height: 30)
+//                        }
+//                    }
+                    Image(uiImage: selectedImage)
+                        .resizable()
+                        .scaledToFit()
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .overlay(RoundedRectangle(cornerRadius: 10)
+                            .stroke(Color.gray, lineWidth: 4))
+                        .shadow(radius: 10)
+                    TextField("Type the description ...", text: $description, axis: .vertical)
+                        .textFieldStyle(.roundedBorder)
+                        .multilineTextAlignment(.leading)
+                        .padding()
+                    Button("Send the message") {
+                        sendMessage()
                     }
+                    .padding()
+                    .background(.blue)
+                    .foregroundColor(.white)
+                    .clipShape(Capsule())
                 }
-                Image(uiImage: selectedImage)
+                .padding(.bottom, 20)
+            } else {
+                Spacer()
+                Image(systemName: "camera")
                     .resizable()
+                    .frame(width: 240, height: 200)
                     .scaledToFit()
-                    
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                    .overlay(RoundedRectangle(cornerRadius: 10)
-                    .stroke(Color.gray, lineWidth: 4))
-                    .shadow(radius: 10)
-                TextField("Type the description ...", text: $description) {
-                    
-                }
-                .multilineTextAlignment(.leading)
-                .lineLimit(3)
-                .padding(.all, 10)
-                Button("Send the message") {
-                    sendMessage()
-                }
-                .padding()
-                .background(.blue)
-                .foregroundColor(.white)
-                .clipShape(Capsule())
+                    .shadow(radius: 1)
+                    .fullScreenCover(isPresented: self.$showCamera) {
+                        accessCameraView(selectedImage: self.$selectedImage)
+                            .edgesIgnoringSafeArea(.all)
+                    }
+                    .onTapGesture {
+                        showCamera = true
+                    }
             }
-            .padding(.all, 20)
-        } else {
-            Image(systemName: "camera")
-                .resizable()
-                .frame(width: 240, height: 200)
-                .scaledToFit()
-                .fullScreenCover(isPresented: self.$showCamera) {
-                    accessCameraView(selectedImage: self.$selectedImage)
-                        .edgesIgnoringSafeArea(.all)
-                }
-                .onTapGesture {
-                    showCamera = true
-                }
+            Spacer()
         }
+        .padding(.top, 25)
+
     }
     
     internal func sendMessage() {
@@ -91,10 +113,15 @@ struct CameraView: View {
                 }
             }
         }
-        
+    }
+    internal func closeView() {
+        if (selectedImage != nil) {
+            selectedImage = nil
+        } else {
+            exit(0)
+        }
     }
 }
-
 
 struct accessCameraView: UIViewControllerRepresentable {
     

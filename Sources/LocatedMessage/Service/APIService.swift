@@ -32,7 +32,7 @@ class ApiService: ObservableObject {
         request = URLRequest(url: URL(string: LocatedMessageConfiguration.serverAPIURL)!) as! NSMutableURLRequest
         request.httpMethod = "POST"
         request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
-        request.addValue("Bearer \(LocatedMessageConfiguration.userDefaults.value(forKey: "accessToken") as! String)", forHTTPHeaderField: "Authorization")
+        request.addValue("Bearer \(UserDefaults.standard.value(forKey: "accessToken") as! String)", forHTTPHeaderField: "Authorization")
         
         for (key, value) in parameters {
             body.append(("--\(boundary)\r\n").data(using: .utf8)!)
